@@ -41,7 +41,7 @@
 %% Use this when submitting an article to a sponsored event. You'll
 %% receive a unique submission ID from the organizers
 %% of the event, and this ID should be used as the parameter to this command.
-%%\acmSubmissionID{123-A56-BU3}
+\acmSubmissionID{1486}
 
 %%
 %% The majority of ACM publications use numbered citations and
@@ -55,6 +55,31 @@
 %% the next command will enable that style.
 %%\citestyle{acmauthoryear}
 
+
+%% My Preamble
+\usepackage{graphicx}
+\renewcommand{\citename}{\citet}
+\renewcommand{\cite}{\citep}
+
+
+% For maths
+\usepackage{amssymb}
+
+% For algorithms
+\usepackage{StyFiles/algorithm}
+\usepackage{StyFiles/algorithmic}
+
+% My macros
+\usepackage{StyFiles/sg-macros}
+
+\newcommand{\mmqp}[3]{\textrm{\sc MaxMarginQP}\!\left(\{\by_t, #1\}_{t=1}^{T}, #2, #3\right)}
+
+% MISC
+\usepackage{textcomp}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{multirow}
+
 %%
 %% end of the preamble, start of the body of the document source.
 \begin{document}
@@ -62,7 +87,10 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{The Name of the Title is Hope}
+\title[Multi-task RNN and Higer-order MRFs for Stock Price
+Movement Prediction]{Multi-task Recurrent Neural Network and
+  Higher-order Markov Random Fields for Stock Price Movement
+  Prediction}
 
 %%
 %% The "author" command and its associated commands are used to define
