@@ -46,6 +46,10 @@
   - 是否需要提及计算机视觉中的应用？
 - review5: writing, typo需要改
 
+- 不能叫 sector rotation predictor，没有sector rotation 什么事
+- 应该和intra-clique lead lag ... 相关
+- 需要指明mrf中的权重可以encode先验知识
+
 ## 实验 ##
 
 - review2: be compared with more baselines, for example, an

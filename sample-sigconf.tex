@@ -216,24 +216,45 @@ Prediction]{Multi-task Recurrent Neural Network and Higher-order
 \label{sec:intro}
 % lead lag 现象不是一直存在，个股趋势也非常重要
 
-It has been well-known that single stock's price movement not only depends on its historical records, but also is highly correlated to other stocks~\cite{lo1990contrarian,mech1993portfolio} and may change in a non-synchronous
-manner~\cite{lo1990contrarian,brennan1993investment}. This correlated yet asynchronous price movement phenomenon is sometimes defined as lead-lag relationship~\cite{hou2007industry} within a group of stocks.
-Different speed of information diffusion has been believed to be
-the main reason of lead-lag relationship
+It has been well-known that single stock's price movement not
+only depends on its historical records, but also is highly
+correlated to other
+stocks~\cite{lo1990contrarian,mech1993portfolio} and may change
+in a non-synchronous
+manner~\cite{lo1990contrarian,brennan1993investment}. This
+correlated yet asynchronous price movement phenomenon is
+sometimes defined as lead-lag relationship~\cite{hou2007industry}
+within a group of stocks. Different speed of information
+diffusion has been believed to be the main reason of lead-lag
+relationship
 \cite{lo1990contrarian,badrinath1995shepherds,mcqueen1996delayed}.
-When an information hits the market, some stocks\textquotesingle price tend to
-react faster than others. Therefore, identification of those
-leading stocks and their lead-lag relationships to other lagging
-stocks will provide strong evidence in predicting the latter\textquotesingle s
-price movement direction.
+When an information hits the market, some stocks\textquotesingle
+price tend to react faster than others. Therefore, identification
+of those leading stocks and their lead-lag relationships to other
+lagging stocks will provide strong evidence in predicting the
+latter\textquotesingle s price movement direction.
 
-There are three key challenges in utilizing the lead-lag relationship: (1) Analyzing which group of stocks ($e.g.$, industry,
-supply chain, $etc.$) will be affected by newly arrived information
-and the corresponding leading stocks; (2) Identifying lagging stocks in this group and modeling their relationships; (3) Predicting
-price movement of each stock by jointly considering the knowledge in its correlated group and individual stock\textquotesingle s price movement at current stage.
+There are three key challenges in utilizing the lead-lag
+relationship: (1) Discovering which stock will be affected by
+newly arrived information; (2) Identifying the group ($e.g.$,
+industry, supply chain, $etc.$) it belongs to as well as leading
+stocks and lagging stocks in this group. Then modeling their
+relationships; (3) Predicting price movement of each stock by
+jointly considering the knowledge in its correlated group and
+individual stock\textquotesingle s price movement at current
+stage.
 
-The first challenge is extremely difficult to resolve with an automatic algorithm. This is not only because it requires an expert level understanding of the finance system and the dynamics behind market news as well as stock price, but also due to lacking of training data. However, according to the well-known efficient market hypothesis~\cite{malkiel1970efficient}, stock price reflects all
-available market information. Therefore, informative stock price changes can be employed as an proximity to market news arrival. In this way, the complexity of the first challenge is transformed to the detection of informative price changes in individual stock.
+The first challenge is extremely difficult to resolve with an
+automatic algorithm. This is not only because it requires an
+expert level understanding of the finance system and the dynamics
+behind market news as well as stock price, but also due to
+lacking of training data. However, according to the well-known
+efficient market hypothesis~\cite{malkiel1970efficient}, stock
+price reflects all available market information. Therefore,
+informative stock price changes can be employed as an proximity
+to market news arrival. In this way, the complexity of the first
+challenge is transformed to the detection of informative price
+changes in individual stock.
 
 Economists have spent decades trying to use patterns hidden
 inside historical trading price and volume to predict future
@@ -248,32 +269,71 @@ are motivated to manipulate market price and trap retail
 (individual) traders following their manipulated price to gain
 excess profit~\cite{sun2016decision}.
 
-To overcome those problems and address the first challenge, we employ an end-to-end
-hierarchical multi-task~\cite{caruana1993multitask} RNN to
-extract informative changes from raw market price without using
-any of hand-crafted features such as technical analysis
-indicators. Good performance on price prediction relies on rich
-representations as well as the multi-task framework which can leverage
-complementary aspects from diverse tasks~\cite{sogaard2016deep}. Specifically, given the raw market price data which only contains six features ($i.e.$, opening
-price, low price, high price, closing price, volume, and amount) at each time interval, we leverage a hierarchical multi-task
-network to extract features on different tasks first and then concatenate those complementary feature vectors to make final prediction.
+To overcome those problems and address the first challenge, we
+employ an end-to-end hierarchical
+multi-task~\cite{caruana1993multitask} RNN to extract informative
+changes from raw market price without using any of hand-crafted
+features such as technical analysis indicators. Good performance
+on price prediction relies on rich representations as well as the
+multi-task framework which can leverage complementary aspects
+from diverse tasks~\cite{sogaard2016deep}. Specifically, given
+the raw market price data which only contains six features
+($i.e.$, opening price, low price, high price, closing price,
+volume, and amount) at each time interval, we leverage a
+hierarchical multi-task network to extract features on different
+tasks first and then concatenate those complementary feature
+vectors to make final prediction.
 
-To model lead-lag relationships and address the other two challenges, we present a
-binary Markov Random Fields (MRFs) with weighted lower linear envelope as higher order (when the clique contains more than two
-nodes) energy function~\cite{Kohli:CVPR07,Nowozin:2011,Gould:ICML2011,gouldlearning}.
-In our implementation, we treat each stock as a node in MRFs and each stocks group which has lead-lag relationships as a maximum clique in MRFs. We use pre-defined industry classification
-list~\cite{ths} as the prior domain knowledge of each stock\textquotesingle s belonging maximum clique. Finally, the
-complexity of modeling dynamics between leading and lagging stocks becomes encouraging consistent over large cliques under
-weighted lower linear envelope potentials. Logits from hierarchical RNN networks are used as unary features in MRFs. By minimizing the energy function which contains both unary and higher order
-features, we are able to predict each stock\textquotesingle s future price movement by jointly considering individual market
-price trending together with lead-lag relationships.
+To model lead-lag relationships and address the other two
+challenges, we present a binary Markov Random Fields (MRFs) with
+weighted lower linear envelope as higher order (when the clique
+contains more than two nodes) energy
+function~\cite{Kohli:CVPR07,Nowozin:2011,Gould:ICML2011,gouldlearning}.
+In our implementation, we treat each stock as a node in MRFs and
+each stocks group which has lead-lag relationships as a maximum
+clique in MRFs. We use pre-defined industry classification
+list~\cite{ths} as the prior domain knowledge of each
+stock\textquotesingle s belonging maximum clique. Because we use
+a weighted version of higher order function, stocks have higher
+weights in the above list can be seen as leading stocks, and vice
+versa. Finally, the complexity of modeling dynamics between
+leading and lagging stocks becomes encouraging consistent over
+large cliques under weighted lower linear envelope potentials.
+Logits from hierarchical RNN networks are used as unary features
+in MRFs. By minimizing the energy function which contains both
+unary and higher order features, we are able to predict each
+stock\textquotesingle s future price movement by jointly
+considering individual market price trending together with
+lead-lag relationships.
 
-We justify the effectiveness of the proposed technique based on three popular Chinese stock market indexes and the proposed method outperforms baseline approaches. To the best of our knowledge, the proposed technique is the first one to investigate intra-clique relationships with higher-order MRFs on stock price prediction.
+% todo: 这样说是否合适
+Unlike the first challenge trying to avoid prior knowledge, here
+we consider being able to embed prior knowledge as an advantage
+of our model. Definitions of sectors as well as leading and
+lagging stocks in each sector require solid financial industry
+research. Statistical evidences learned automatically from market
+price data are usually insufficient for determining such
+relationships.
+
+We justify the effectiveness of the proposed technique based on
+three popular Chinese stock market indexes and the proposed
+method outperforms baseline approaches. To the best of our
+knowledge, the proposed technique is the first one to investigate
+intra-clique relationships with higher-order MRFs on stock price
+prediction.
   
-%We verify our methodology on Chinese stock market because
-%it is generally considered less mature than other developed
-%countries\textquotesingle thus potentially to be more
-%profitable~\cite{bessembinder1995profitability}. Even though immature, \citename{fangyan2012} found that the average duration of information arrival-conduction-integration-release process is $4.04$ minutes. Therefore, a minute-level frequency model ismandatory to leverage from lead-lag relationship. To our best knowledge, our model is the first one demonstrating lead-lag relationship at minute-level frequency on Chinese stock market.
+% todo: 需要4.04分钟引用文献
+% We verify our methodology on Chinese stock market because it is
+% generally considered less mature than other developed
+% countries\textquotesingle thus potentially to be more
+% profitable~\cite{bessembinder1995profitability}. Even though
+% immature, \citename{fangyan2012} found that the average
+% duration of information arrival-conduction-integration-release
+% process is $4.04$ minutes. Therefore, a minute-level frequency
+% model is mandatory to leverage from lead-lag relationship. To
+% our best knowledge, our model is the first one demonstrating
+% lead-lag relationship at minute-level frequency on Chinese
+% stock market.
 
 To summarize, the main contributions of this paper include: 
 \begin{itemize}
@@ -423,18 +483,20 @@ In this section, we introduce multi-task DNNs-MRFs architecture
 from lower part to the top part. The whole model is constructed
 with two parts. The first part is a ``Holistic Market Price
 Learner'', which contains three DARNN modules. The goal of the
-first part is to extract informational representations of raw
-market price end-to-end without any input of hand-crafted
-features and technical indicators from stock market. The second
-part is called ``Section Rotation Predictor'' which is a binary
-Markov Random Fields model contains higher order energy
-functions. Those higher order functions are applied to financial
-experts defined sector lists (used as maximum cliques). The goal
-of this part is to utilizing unary features learned by DNNs
-together with domain knowledge from financial experts by modeling
-higher order consistency among stocks which belong to the same
-sector. We summarized the whole architecture in
-figure~\ref{fig:mrfrnn}.
+first part is to tackle the first challenge: extracting
+informational representations of raw market price end-to-end
+without any input of hand-crafted features and technical
+indicators from stock market. The second part is called
+``Intra-clique Predictor'' which is a binary Markov Random Fields
+model contains weighted higher order energy functions. Those
+higher order functions are applied to financial experts defined
+sector lists (used as maximum cliques). Leading stocks and
+lagging stocks are assigned to higher and lower weights in energy
+function accordingly. The goal of this part is to demonstrate
+second and third challenge. Unary features learned by DNNs are
+utilized together with higher order consistency relationships
+among stocks which belong to the same sector. We summarized the
+whole architecture in figure~\ref{fig:mrfrnn}.
 
 
 \subsection{Holistic Market Price Learner}
@@ -453,7 +515,7 @@ data. At top level, it is supervised by high-level task that
 learns to use representations extracted by two bottom modules as
 well as raw market price data to predict ascending / descending
 price movement of stocks. Logits of the last layer are passed to
-Sector Rotation Predictor described in section~\ref{sec:srp} as
+Intra-clique Predictor described in section~\ref{sec:srp} as
 unary features.
 
 \begin{figure}[t]
@@ -497,7 +559,7 @@ sign(y_{t+p}-y_t)$ where $y_t$ denotes closing price at time-step
 $t$. We use cross-entropy as loss function to train the final
 $\text{DARNN}_{\text{multi}}$. Logits (outputs before going through
 \emph{softmax}) of $\text{DARNN}_{\text{multi}}$ are then passed to 
-``Sector Rotation Predictor'' as unary features.
+``Intra-clique Predictor'' as unary features.
 
 In order to train HMPL together with MRFs in an end-to-end manner,
 we follow the subgradient method proposed by \citename{witoonchart2017application}.
@@ -514,7 +576,11 @@ taking derivative of equation~(\ref{eq:energyfunction_UPH}):
 \end{align}
 
 \noindent where $y$ is the ground-truth label and $y^*$ is
-inferenced label. And gradients of parameters can be calculated by
+inferenced label. $\psi^U$ is unary feature function described in
+section~\ref{sec:llep}, here it contains logits calculated from
+$\text{DARNN}_{\text{multi}}$. $\bw$ is parameter vector of
+$\text{DARNN}_{\text{multi}}$. And gradients of parameters can be
+calculated by
 
 \begin{align}
   \label{eq:der_phi}
@@ -525,7 +591,7 @@ Equations \eqref{eq:der_w} and \eqref{eq:der_phi} can be directly plugged
 into sub-gradient algorithm proposed in \cite{witoonchart2017application}.
 Other configurations stay the same with their algorithm.
 
-\subsection{Sector Rotation Predictor}
+\subsection{Intra-clique Predictor}
 \label{sec:srp}
 
 We begin with a brief review of our choices of unary, pairwise
@@ -536,7 +602,8 @@ parameters under the latent structural SVM framework and also how
 to back-prop gradients to neural networks.
 
 
-\subsubsection{Higer Order Energy: The Lower Linear Envelope Function}
+\subsubsection{Higer Order Energy: The Weighted Lower Linear
+  Envelope Function}
 \label{sec:llep}
 
 Energy functions can be decomposed over nodes $\N$, edges $\E$
@@ -1035,18 +1102,24 @@ All these indexes are exclusive and are refined on a yearly
 basis. In this paper, we use fixed versions on 30-JAN-2015. We
 then collect their constituent stocks' minute-level data from
 05-JAN-2015 to 29-DEC-2017. On Chinese stock market each trading
-day has 3 trading hours. So there are 240 samples for each
-normally traded stock each day. Each sample contains 6 features:
-opening price, high price, low price, closing price, volume,
-amount. \footnote{During this period, there are some stocks
-  de-listed (SZ000024, SH600485, SH600832 in CSI 200; SZ000693,
-  SZ000748, SZ000982 in CSI 500; SH600485, SH600832, SZ000024,
-  SH601299 in CSI 300). Therefore, in total we collect 197, 497
-  and 296 stocks during this period respectively.} For each
-stock, the first $80\%$ days are used to construct the training
-set and the last $20\%$ days are used as testing set.
-Approximately training set and testing set contain 13 million and
-3 million samples, respectively.
+day has 4 trading hours. So there are 240 samples (minutes) for
+each normally traded stock each day. Each sample contains 6
+features: opening price, high price, low price, closing price,
+volume, amount. \footnote{During this period, there are some
+  stocks de-listed (SZ000024, SH600485, SH600832 in CSI 200;
+  SZ000693, SZ000748, SZ000982 in CSI 500; SH600485, SH600832,
+  SZ000024, SH601299 in CSI 300). Therefore, in total we collect
+  197, 497 and 296 stocks during this period respectively.} For
+each stock, the first $80\%$ days are used to construct the
+training set and the last $20\%$ days are used as testing set.
+Approximately training set and testing set contain $33.6$ million
+and $4.2$ million samples, respectively. $49.5\%$ of them are
+positive movements, $0.3\%$ of them stays unchanged and $50.2\%$
+of them are negative movements. For binary classification task,
+we follow \citename{mitchell2001characteristics}'s approach and
+label all positive movement samples $1$ and $0$ for the other
+samples. More labeling details are described in appendix
+\ref{sec:train_detail}.
 
 \begin{table}[H]
 \centering
@@ -1062,31 +1135,34 @@ Approximately training set and testing set contain 13 million and
   \label{tab:ta}
 \end{table}
 
-To demonstrate benefits of multi-task RNN over
-manually designed technical indicators, we also need to construct
-technical indicators datasets for each of those market price
-dataset collected above. We select 8 most popular indicators, 2
-from each category~\cite{kirkpatrick2010technical} shown in Table
+To demonstrate benefits of multi-task RNN over manually designed
+technical indicators, we also need to construct technical
+indicators datasets for each of those market price dataset
+collected above. We select 8 most popular indicators, 2 from each
+category~\cite{kirkpatrick2010technical} shown in Table
 \ref{tab:ta}. In implementation, we use open source package
 \emph{Technical Analysis Library in
   Python\footnote{https://github.com/bukosabino/ta}} to calculate
 those indicators and all hyper parameters are using package's
-default settings. After technical indicators calculation, these 8
-new features are concatenated to above market price dataset (5
-features at each minute). So the final input dataset for each single
-task model contains 13 features in total. Before feeding into
-models, we normalize each stock with \emph{z-score}
-function using standard deviation and mean calculated in the training set.
+default settings without any prior expert knowledge involved
+with. After technical indicators calculation, these 8 new
+features are concatenated to above market price dataset (5
+features at each minute). So the final input dataset for each
+single task model contains 13 features in total. Before feeding
+into models, we normalize each stock with \emph{z-score} function
+using standard deviation and mean calculated in the training set.
 
-For brevity, we denote market price dataset which only contains  $5$ features as \textbf{Market} and the concatenated $13$ features dataset as
-\textbf{Indicator}. As discussed in section~\ref{sec:hmpl}, 
-closing price at time $t$ can be directly used as regression 
-target for $\text{DARNN}_{\text{trend}}$. 
-Standard deviation of closing price with a window size of $10$ 
-is used as regression target for $\text{DARNN}_{\text{volat}}$.
-The dimensions of
-hidden state and cell state are 32 for $\text{DARNN}_{\text{trend}}$ as well as $\text{DARNN}_{\text{volat}}$ and
-128 for $\text{DARNN}_{\text{multi}}$. More training details are
+For brevity, we denote market price dataset which only contains
+$5$ features as \textbf{Market} and the concatenated $13$
+features dataset as \textbf{Indicator}. As discussed in
+section~\ref{sec:hmpl}, closing price at time $t$ can be directly
+used as regression target for $\text{DARNN}_{\text{trend}}$.
+Standard deviation of closing price with a window size of $10$ is
+used as regression target for $\text{DARNN}_{\text{volat}}$. The
+dimensions of hidden state and cell state are 32 for
+$\text{DARNN}_{\text{trend}}$ as well as
+$\text{DARNN}_{\text{volat}}$ and 128 for
+$\text{DARNN}_{\text{multi}}$. More training details are
 described in appendix \ref{sec:train_detail}.
 
 \subsection{Results}
@@ -1095,9 +1171,15 @@ described in appendix \ref{sec:train_detail}.
 In order to demonstrate the effectiveness of our framework, we
 run 3 baselines on 3 different Chinese Securities Indexes with
 and without technical analysis indicators as inputs. Results are
-summarized in Table~\ref{tab:result}. All results are reported over the test sets. We select four metrics as evaluation
-metrics to justify the effectiveness of the proposed approach. They are calculated by collecting all
-predicted labels of constituent stocks in each CSI index.
+summarized in Table~\ref{tab:result}. All results are reported
+over the test sets. We select four metrics as evaluation metrics
+to justify the effectiveness of the proposed approach. They are
+calculated by collecting all predicted labels of constituent
+stocks in each CSI index.
+
+During training time, our algorithm converges in from 4 to 19
+CCCP outer loops. The average inference time of graph-cut
+algorithm is 34 seconds.
 
 \begin{table*}[t]
 \centering
@@ -1393,9 +1475,6 @@ lagging stocks should have lower weights. In our implementation,
 we use constituents' weight defined in CSI200, CSI500 and CSI300
 as their weights in equation~(\ref{eqn:potential2}) and normalize
 them to ensure the summation equals $1$.
-
-
-
 
 \end{document}
 \endinput
